@@ -2,7 +2,7 @@
 import { PlaywrightCrawler, ProxyConfiguration } from "crawlee";
 import { router, write } from "./routes.js";
 
-const startUrls = ["https://crawlee.dev"];
+const startUrls = ["https://blocktechbrew.com/"];
 
 const crawler = new PlaywrightCrawler({
   // proxyConfiguration: new ProxyConfiguration({ proxyUrls: ['...'] }),

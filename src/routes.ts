@@ -3,13 +3,27 @@ import { readFile, writeFile } from "fs/promises";
 import { PathLike } from "fs";
 import { glob } from 'glob';
 import { isWithinTokenLimit } from "gpt-tokenizer";
+import { Page } from "playwright";
 
 export const router = createPlaywrightRouter();
+
+// function generateUrls(baseURL: any, numberOfPages: any) {
+//     const urls = [];
+//     for (let i = 1; i <= numberOfPages; i++) {
+//       urls.push(`${baseURL}/page${i}`);
+//     }
+//     return urls;
+//   }
+  
+//   const baseURL = 'https://buildfuture.ai';
+//   const numberOfPagesToCrawl = 10;
+//   const urlsToCrawl = generateUrls(baseURL, numberOfPagesToCrawl);
 
 router.addDefaultHandler(async ({ enqueueLinks, log }) => {
     log.info(`enqueueing new URLs`);
     await enqueueLinks({
-        globs: ['https://crawlee.dev/**'],
+        globs: ['https://blocktechbrew.com/**'],
+        // urls: urlsToCrawl,
         label: 'detail',
     });
 });
@@ -17,10 +31,12 @@ router.addDefaultHandler(async ({ enqueueLinks, log }) => {
 router.addHandler('detail', async ({ request, page, log }) => {
     const title = await page.title();
     log.info(`${title}`, { url: request.loadedUrl });
+    const html = await getPageHtml(page, "body")
 
     await Dataset.pushData({
         url: request.loadedUrl,
         title,
+        html
     });
 });
 
@@ -35,8 +51,8 @@ export async function write() {
     let currentResults: Record<string, any>[] = [];
     let currentSize: number = 0;
     let fileCounter: number = 1;
-    const maxBytes: number = 5000
-      ? 5000 * 1024 * 1024
+    const maxBytes: number = 100000000
+      ? 100000000 * 1024 * 1024
       : Infinity;
   
     const getStringByteSize = (str: string): number =>
@@ -67,11 +83,11 @@ export async function write() {
       const contentString: string = JSON.stringify(data);
       const tokenCount: number | false = isWithinTokenLimit(
         contentString,
-        5000 || Infinity,
+        100000000 || Infinity,
       );
   
       if (typeof tokenCount === "number") {
-        if (estimatedTokens + tokenCount > 5000!) {
+        if (estimatedTokens + tokenCount > 100000000!) {
           // Only write the batch if it's not empty (something to write)
           if (currentResults.length > 0) {
             await writeBatchToFile();
@@ -106,6 +122,27 @@ export async function write() {
     return nextFileNameString;
   }
   
+  export function getPageHtml(page: Page, selector = "*") {
+    return page.evaluate((selector) => {
+      // Check if the selector is an XPath
+      if (selector.startsWith("/")) {
+        const elements = document.evaluate(
+          selector,
+          document,
+          null,
+          XPathResult.ANY_TYPE,
+          null,
+        );
+        let result = elements.iterateNext();
+        return result ? result.textContent || "" : "";
+      } else {
+        // Handle as a CSS selector
+        const el = document.querySelector(selector) as HTMLElement | null;
+        return el?.innerText || "";
+      }
+    }, selector);
+  }
+
 //   class GPTCrawlerCore {
 //     config: Config;
   
