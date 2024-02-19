@@ -1,14 +1,12 @@
 // For more information, see https://crawlee.dev/
 import { PlaywrightCrawler, ProxyConfiguration } from "crawlee";
 import { router, write } from "./routes.js";
+import { defaultConfig } from "./constants/dataa.js";
 
-const startUrls = ["https://blocktechbrew.com/"];
+const startUrls = [defaultConfig.url];
 
 const crawler = new PlaywrightCrawler({
-  // proxyConfiguration: new ProxyConfiguration({ proxyUrls: ['...'] }),
   requestHandler: router,
-  // Uncomment and change to false to open the browser
-  // headless: false,
 });
 
 await crawler.run(startUrls);

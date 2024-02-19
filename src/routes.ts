@@ -4,6 +4,7 @@ import { PathLike } from "fs";
 import { glob } from 'glob';
 import { isWithinTokenLimit } from "gpt-tokenizer";
 import { Page } from "playwright";
+import { defaultConfig } from './constants/dataa';
 
 export const router = createPlaywrightRouter();
 
@@ -15,14 +16,14 @@ export const router = createPlaywrightRouter();
 //     return urls;
 //   }
   
-//   const baseURL = 'https://buildfuture.ai';
-//   const numberOfPagesToCrawl = 10;
+//   const baseURL = defaultConfig.match;
+//   const numberOfPagesToCrawl = 5;
 //   const urlsToCrawl = generateUrls(baseURL, numberOfPagesToCrawl);
 
 router.addDefaultHandler(async ({ enqueueLinks, log }) => {
     log.info(`enqueueing new URLs`);
     await enqueueLinks({
-        globs: ['https://blocktechbrew.com/**'],
+        globs: [defaultConfig.match],
         // urls: urlsToCrawl,
         label: 'detail',
     });

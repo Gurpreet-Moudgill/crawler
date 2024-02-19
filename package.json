@@ -4,21 +4,28 @@
     "type": "module",
     "description": "This is an example of a Crawlee project.",
     "dependencies": {
+        "cors": "^2.8.5",
         "crawlee": "3.7.3",
+        "express": "^4.18.2",
         "glob": "^10.3.10",
         "gpt-tokenizer": "^2.1.2",
         "playwright": "1.41.2"
     },
     "devDependencies": {
         "@apify/tsconfig": "0.1.0",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/nodemon": "^1.19.6",
+        "nodemon": "^3.0.3",
+        "ts-node": "^10.9.2",
         "tsup": "8.0.1",
         "tsx": "4.7.0",
-        "typescript": "5.3.3"
+        "typescript": "^5.3.3"
     },
     "scripts": {
         "start": "npm run start:dev",
         "start:prod": "node dist/main.js",
-        "start:dev": "tsx src/main.ts",
+        "start:dev": "tsx src/server.ts",
         "build": "tsup",
         "typescheck": "tsc --noEmit",
         "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1"
